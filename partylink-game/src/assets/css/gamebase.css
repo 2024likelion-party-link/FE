@@ -1,0 +1,139 @@
+@font-face {
+  font-family: "PartialSansKR-Regular";
+  src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2307-1@1.1/PartialSansKR-Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Pretendard-Regular";
+  src: url("https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+}
+
+body {
+  margin: 0 auto;
+  background-color: #262b34;
+
+  font-family: "PartialSansKR-Regular";
+  color: white;
+}
+
+header {
+  width: 100%;
+  height: 20vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.game {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  height: 52px;
+}
+
+.logo {
+  font-weight: 400;
+  font-size: 24px;
+  opacity: 0.8;
+}
+
+.game_name {
+  font-weight: 400;
+  font-size: 36px;
+}
+
+.game_info {
+  width: 48px;
+  height: 48px;
+
+  margin: 5px 0 0 10px;
+}
+
+main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal {
+  width: 70%;
+  height: 60vh;
+
+  background: linear-gradient(rgba(255, 255, 255, 1) 0%, rgba(26, 188, 156, 1) 100%);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  outline: none;
+  border-radius: 28px;
+
+  font-family: "Pretendard-Regular";
+  font-size: 18px;
+}
+
+.modal-content {
+  width: 100%;
+  height: 60vh;
+  padding: 0 10%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  background-color: rgb(100, 108, 123, 0.8);
+  border-radius: 28px;
+
+  justify-content: center;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5); /* 흐림 효과 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000; /* 화면 맨 위로 */
+}
+
+hr {
+  width: 100%;
+  background: #7887a2;
+  height: 1px;
+  border: 0;
+}
+
+.title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 24px;
+  font-weight: 700;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.bold {
+  font-weight: 600;
+}
+
+.background {
+  background-color: rgb(255, 255, 255, 0.3);
+}
+
+.img_game {
+  width: 50px;
+  height: 56px;
+}
