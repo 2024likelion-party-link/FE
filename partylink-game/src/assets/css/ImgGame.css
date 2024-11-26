@@ -1,0 +1,114 @@
+@font-face {
+  font-family: "Pretendard-Regular";
+  src: url("https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+}
+
+main {
+  font-family: "Pretendard-Regular";
+}
+
+.game_box {
+  width: calc(90% - 10vh);
+  height: 30vh;
+  padding: 5vh;
+
+  background-color: #1e2224;
+  border-radius: 15px 15px 0 0;
+}
+
+.game_box > * {
+  position: relative;
+  bottom: 20px;
+}
+
+.user {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.user_img {
+  z-index: 2;
+
+  width: 7vh;
+  height: 7vh;
+
+  background-color: #8e8e8e;
+  border: 2px solid white;
+  border-radius: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 6vh;
+  font-weight: 500;
+
+  position: relative;
+}
+
+.user_name {
+  font-size: 2vh;
+  margin-top: 5px;
+  z-index: 3;
+}
+
+.me {
+  display: flex;
+  justify-content: center;
+}
+
+.me_img {
+  background-color: #c4ebe3;
+}
+
+.user_po1 {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+
+.myturn_img {
+  box-shadow: 0 0 1px #fff, 0 0 1px #fff, 0 0 5px #fff, 0 0 5px #fff;
+}
+.myturn {
+  text-shadow: 0 0 1px #fff, 0 0 1px #fff, 0 0 5px #fff, 0 0 5px #fff;
+}
+
+.user_po2 {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.user_po3 {
+  position: relative;
+  bottom: 10vh;
+}
+.user_score {
+  color: #c4ebe3;
+  font-size: 20px;
+  font-weight: 600;
+
+  width: 24px;
+  height: 24px;
+  border-radius: 100%;
+  background-color: rgb(255, 255, 255, 0.7);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  position: relative;
+  left: 3vh;
+  top: 1.5vh;
+
+  z-index: 4;
+}
+
+svg {
+  z-index: 1;
+}
