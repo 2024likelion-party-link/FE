@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import styles from "../../assets/css/SbhGame.module.css"; // CSS 모듈 임포트
 import finger5 from "../../assets/img/5.png";
 import finger4 from "../../assets/img/4.png";
@@ -9,8 +10,15 @@ import finger0 from "../../assets/img/0.png";
 import Modal from "react-modal";
 import game_info from "../../assets/img/game_info.svg";
 import img_game from "../../assets/img/img_game.svg";
+import axios from "axios";
+import Cookies from "js-cookie";
 
 const SbhGame = () => {
+  const { room_id } = useParams(); // URL에서 room_id 가져오기
+  const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+  const navigate = useNavigate();
+  const webSocket = useRef(null);
+
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
   // 모달 열기/닫기 함수
@@ -26,6 +34,47 @@ const SbhGame = () => {
 
   // 손가락 이미지 배열
   const fingerImages = [finger0, finger1, finger2, finger3, finger4, finger5];
+
+  // 비동기 함수로 user_id를 쿠키에 저장
+  const authenticateUser = async () => {
+    try {
+      const user_id = Cookies.get("user_id"); // 쿠키에서 user_id 가져오기
+      const response = await axios.post(`${BASE_URL}/ws/game/${room_id}/`, { user_id: user_id });
+
+      const { user_id: returnedUserId } = response.data;
+
+      // user_id를 쿠키에 저장 (유효 기간 설정 가능)
+      Cookies.set("user_id", returnedUserId, { expires: 1 }); // 1일 동안 유지
+
+      // 쿠키를 통해 사용자 인증 확인
+      const storedUserId = Cookies.get("user_id");
+      if (storedUserId) {
+        console.log("User authenticated:", storedUserId);
+      } else {
+        console.error("Failed to authenticate user.");
+      }
+    } catch (error) {
+      console.error("Error authenticating user:", error);
+    }
+  };
+
+  useEffect(() => {
+    // authenticateUser 호출
+    authenticateUser();
+
+    webSocket.current = new WebSocket(`${BASE_URL}/ws/game/${room_id}/`);
+    webSocket.current.onopen = () => {
+      console.log("WebSocket 연결!");
+    };
+
+    webSocket.onerror = (err) => {
+      console.error("WebSocket 에러:", err);
+    };
+
+    webSocket.onclose = () => {
+      console.log("WebSocket 연결 종료");
+    };
+  }, [room_id]);
 
   return (
     <>
@@ -69,7 +118,7 @@ const SbhGame = () => {
             </div>
           </div>
         </div>
-      </main>{" "}
+      </main>
       <Modal
         isOpen={modalIsOpen} // 모달 열림 여부
         onRequestClose={closeModal} // 바깥 클릭 또는 ESC 키로 닫기
