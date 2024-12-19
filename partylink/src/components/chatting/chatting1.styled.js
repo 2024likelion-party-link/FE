@@ -4,6 +4,7 @@ export const ContainerAll = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  // width: calc(90% - 10vh);
   width: 100%;
   height: 100%;
   background-color: #262b34;
@@ -16,8 +17,8 @@ export const Container = styled.div`
   flex-direction: column;
   justify-content: space-between;
   width: 100%;
-  max-width: 600px;
-  height: 500px;
+  max-width: 600px; /* 최대 너비 설정 */
+  height: 45vh; /* 높이를 화면의 45%로 고정 */
   background-color: #1e2224;
   border-radius: 0 0 25px 25px;
   margin-top: 10px;
@@ -27,8 +28,10 @@ export const Container = styled.div`
 export const ChatInfo = styled.div`
   padding: 25px;
   background-color: #1e2224;
-  overflow-y: overlay;
+  overflow-y: auto; /* 세로 스크롤 자동 활성화 */
   overflow-x: hidden;
+  height: 60vh; /* 화면의 60% 높이로 고정 */
+  box-sizing: border-box;
 
   &::-webkit-scrollbar {
     width: 7px;
@@ -43,16 +46,25 @@ export const ChatInfo = styled.div`
   }
 `;
 
-export const Information = styled.div`
+export const MessageWrapper = styled.div`
+  margin-top: ${(props) => (props.isGap ? "10px" : "1px")};
   display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 20px 0;
+  flex-direction: column;
+  width: 100%;
+`;
 
-  img {
-    width: 380px;
-    max-width: 100%;
-  }
+export const InformationImg = styled.img`
+  width: 380px;
+  max-width: 100%;
+  height: auto;
+`;
+
+export const InformationText = styled.div`
+  font-size: 14px;
+  color: #fff;
+  text-align: center;
+  margin-top: 10px;
+  font-weight: bold;
 `;
 
 export const PlayerLabel = styled.div`
@@ -66,22 +78,17 @@ export const PlayerInfo = styled.div`
   gap: 10px;
 `;
 
-export const MessageWrapper = styled.div`
-  margin-top: ${(props) => (props.isGap ? "10px" : "1px")};
-  display: flex;
-  flex-direction: column;
-`;
-
 export const Message = styled.div`
   align-self: ${(props) => (props.isUser ? "flex-end" : "flex-start")};
   font-size: 14px;
-  color: ${(props) => (props.isQuestion ? "#4722E4" : "#fff")};
+  color: ${(props) => (props.isQuestion ? "#4722E4" : "#fff")}; // 질문일 경우 남색
   font-weight: ${(props) => (props.isQuestion ? "bold" : "normal")};
   margin: 0;
   padding: 10px 15px;
   background: ${(props) => (props.isUser ? "radial-gradient(circle, #c2d5cb 0.1%, #A1B5A9 50%)" : "radial-gradient(circle, #9cabc6 0.1%, #7e90b0 50%)")};
   border-radius: 15px;
   max-width: 80%;
+  word-wrap: break-word;
 `;
 
 export const ChatInputWrapper = styled.div`
@@ -151,14 +158,11 @@ export const Input = styled.input`
   border: none;
   background: transparent;
   font-size: 14px;
-  font-weight: ${(props) => (props.isMyTurn ? "bold" : "normal")}; /* 질문은 bold */
-  color: ${(props) => (props.isMyTurn ? "#4722E4" : "#fff")}; /* 내 차례면 텍스트 색상 남색 */
+  font-weight: ${(props) => (props.isMyTurn ? "bold" : "normal")};
+  color: ${(props) => (props.isMyTurn ? "#4722E4" : "#fff")};
   outline: none;
 
-  // margin-top: 3px;
-
   &::placeholder {
-    color: ${(props) => (props.isMyTurn ? "#4722E4" : "white")}; /* 플레이스홀더 색상 변경 */
-    // font-weight: ${(props) => (props.isMyTurn ? "bold" : "normal")}; /* 질문은 bold */
+    color: ${(props) => (props.isMyTurn ? "#4722E4" : "white")};
   }
 `;
