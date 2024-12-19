@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import styles from "../../assets/css/SbhGame.module.css"; // CSS 모듈 임포트
 import finger5 from "../../assets/img/5.png";
 import finger4 from "../../assets/img/4.png";
@@ -16,8 +16,8 @@ import Cookies from "js-cookie";
 const SbhGame = () => {
   const { room_id } = useParams(); // URL에서 room_id 가져오기
   const BASE_URL = process.env.REACT_APP_API_BASE_URL;
-  const navigate = useNavigate();
   const webSocket = useRef(null);
+  const [participants, setParticipants] = useState([]);
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
@@ -29,7 +29,16 @@ const SbhGame = () => {
 
   // 손가락 줄이기 함수
   const downFinger = () => {
-    setFingerCount((prev) => Math.max(prev - 1, 0)); // 손가락 개수를 0 이하로 줄이지 않음
+    if (fingerCount > 0) {
+      setFingerCount((prev) => prev - 1);
+
+      // WebSocket 메시지 전송
+      if (webSocket.current && webSocket.current.readyState === WebSocket.OPEN) {
+        webSocket.current.send(JSON.stringify({ type: "fold" }));
+      } else {
+        console.error("WebSocket is not connected");
+      }
+    }
   };
 
   // 손가락 이미지 배열
@@ -62,9 +71,35 @@ const SbhGame = () => {
     // authenticateUser 호출
     authenticateUser();
 
-    webSocket.current = new WebSocket(`${BASE_URL}/ws/game/${room_id}/`);
+    webSocket.current = new WebSocket(`wss://strawberrypudding.store/ws/game/${room_id}/`);
     webSocket.current.onopen = () => {
       console.log("WebSocket 연결!");
+    };
+
+    webSocket.current.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      switch (message.type) {
+        case "participants_update":
+          console.log("Participants update:", message.participants);
+          // 참가자 상태 업데이트 처리
+          break;
+        case "game_started":
+          console.log("Game started!");
+          // 게임 시작 처리
+          break;
+        case "error":
+          console.error("WebSocket error:", message.message);
+          break;
+        default:
+          console.warn("Unknown message type:", message);
+      }
+    };
+
+    webSocket.current.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      if (message.type === "participants_update") {
+        setParticipants(message.participants);
+      }
     };
 
     webSocket.onerror = (err) => {
@@ -73,6 +108,11 @@ const SbhGame = () => {
 
     webSocket.onclose = () => {
       console.log("WebSocket 연결 종료");
+    };
+
+    // 컴포넌트 언마운트 시 WebSocket 종료
+    return () => {
+      if (webSocket.current) webSocket.current.close();
     };
   }, [room_id]);
 
@@ -87,7 +127,8 @@ const SbhGame = () => {
           </div>
         </div>
       </header>
-      <main>
+
+      {/* <main>
         <div className={styles.game_box}>
           <div className={styles.user_po1}>
             <div className={`${styles.user} ${styles.user1}`}>
@@ -118,7 +159,44 @@ const SbhGame = () => {
             </div>
           </div>
         </div>
+      </main> */}
+
+      <main>
+        <div className={styles.game_box}>
+          {/* user_po1 */}
+          <div className={styles.user_po1}>
+            {participants.slice(0, 2).map((participant, index) => (
+              <div className={`${styles.user} ${index === 0 ? styles.user1 : styles.user2}`} key={participant.userId}>
+                <img
+                  className={`${styles.user_img} ${index === 0 ? styles.myturn_img : ""}`}
+                  src={fingerImages[participant.fingers]}
+                  alt={`${participant.nickname} 손`}
+                />
+                <div className={`${styles.user_name} ${index === 0 ? styles.myturn : ""}`}>{participant.nickname}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* user_po2 */}
+          <div className={styles.user_po2}>
+            {participants.slice(2, 4).map((participant, index) => (
+              <div className={`${styles.user} ${index === 0 ? styles.user3 : styles.user4}`} key={participant.userId}>
+                <img className={styles.user_img} src={fingerImages[participant.fingers]} alt={`${participant.nickname} 손`} />
+                <div className={styles.user_name}>{participant.nickname}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* user_po3 (Current User) */}
+          <div className={styles.user_po3}>
+            <div className={`${styles.user} ${styles.me}`} onClick={downFinger}>
+              <img className={styles.user_img} src={fingerImages[fingerCount]} alt="손가락 접기" />
+              <div className={styles.user_name}> (나)</div>
+            </div>
+          </div>
+        </div>
       </main>
+
       <Modal
         isOpen={modalIsOpen} // 모달 열림 여부
         onRequestClose={closeModal} // 바깥 클릭 또는 ESC 키로 닫기
@@ -130,8 +208,8 @@ const SbhGame = () => {
       >
         <div className={styles.modal_content}>
           <div className={styles.title}>
-            <img src={img_game} alt="이미지게임" className={styles.img_game} /> {/* 수정됨 */}
-            <div>이미지 게임</div>
+            <img src={img_game} alt="손병호게임" className={styles.img_game} />
+            <div>손병호 게임</div>
           </div>
           <hr />
           <div className={styles.content}>

@@ -35,6 +35,12 @@ const GameCategory = () => {
     setGameType("손병호 게임");
   };
 
+  const handleSbhGame = () => {
+    navigate("/SbhGame");
+  };
+  const handleImgGame = () => {
+    navigate("/ImgGame");
+  };
   // 페이지 로드 시 모달을 열도록 설정
   useEffect(() => {
     setIsModalOpen(true);
@@ -99,14 +105,14 @@ const GameCategory = () => {
         <p>함께 플레이 하고 싶은 게임을 선택해</p>
         <p> 친구들에게 제안해보세요!</p>
         <div className="game-container">
-          <div className="game-box">
+          <div className="game-box" onClick={handleSbhGame}>
             <div className="game-flex">
               <img src={handGame} className="game-img" alt="Hand Game"></img>
               <h4>손병호 게임</h4>
             </div>
             <p>"OOO 한 사람 접어 !"</p>
           </div>
-          <div className="game-box">
+          <div className="game-box" onClick={handleImgGame}>
             <div className="game-flex">
               <img src={imgGame} className="game-img" alt="Image Game"></img>
               <h4>이미지 게임</h4>
