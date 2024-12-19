@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import * as Styled from "../chatting/chatting1.styled";
 import styles from "../../assets/css/SbhGame.module.css";
 
@@ -29,8 +29,12 @@ import HelpImage from "../../assets/img/HELP.svg";
 
 // 서영
 const SbhGame = () => {
-  const { room_id } = useParams(); // URL에서 room_id 가져오기
-  const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+  const location = useLocation();
+  const { room_id = "defaultRoom", nickname = "Guest", gameType = "defaultGame" } = location.state || {};
+
+  // room_id와 nickname을 활용해 로직 작성
+  console.log("Room ID:", room_id, "Nickname:", nickname, "Game Type:", gameType);
+
   const webSocket = useRef(null);
   const [participants, setParticipants] = useState([]);
 
@@ -59,77 +63,51 @@ const SbhGame = () => {
   // 손가락 이미지 배열
   const fingerImages = [finger0, finger1, finger2, finger3, finger4, finger5];
 
-  // 비동기 함수로 user_id를 쿠키에 저장
-  const authenticateUser = async () => {
-    try {
-      const user_id = Cookies.get("user_id"); // 쿠키에서 user_id 가져오기
-      const response = await axios.post(`${BASE_URL}/ws/game/${room_id}/`, { user_id: user_id });
-
-      const { user_id: returnedUserId } = response.data;
-
-      // user_id를 쿠키에 저장 (유효 기간 설정 가능)
-      Cookies.set("user_id", returnedUserId, { expires: 1 }); // 1일 동안 유지
-
-      // 쿠키를 통해 사용자 인증 확인
-      const storedUserId = Cookies.get("user_id");
-      if (storedUserId) {
-        console.log("User authenticated:", storedUserId);
-      } else {
-        console.error("Failed to authenticate user.");
-      }
-    } catch (error) {
-      console.error("Error authenticating user:", error);
-    }
-  };
-
   useEffect(() => {
-    // authenticateUser 호출
-    authenticateUser();
+    webSocket.current = new WebSocket(`wss://strawberrypudding.store/ws/game/8kPzQlJkHSDa/`);
 
-    webSocket.current = new WebSocket(`wss://strawberrypudding.store/ws/game/${room_id}/`);
     webSocket.current.onopen = () => {
       console.log("WebSocket 연결!");
     };
 
     webSocket.current.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      switch (message.type) {
-        case "participants_update":
-          console.log("Participants update:", message.participants);
-          // 참가자 상태 업데이트 처리
-          break;
-        case "game_started":
-          console.log("Game started!");
-          // 게임 시작 처리
-          break;
-        case "error":
-          console.error("WebSocket error:", message.message);
-          break;
-        default:
-          console.warn("Unknown message type:", message);
+      try {
+        const message = JSON.parse(event.data);
+        switch (message.type) {
+          case "game_start":
+            console.log(`${message.gameType} 게임 시작`);
+            break;
+          case "participants_update":
+            setParticipants(message.participants || []);
+            break;
+          default:
+            console.warn("Unknown message type:", message);
+        }
+      } catch (error) {
+        console.error("Message parsing error:", error);
       }
     };
 
-    webSocket.current.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      if (message.type === "participants_update") {
-        setParticipants(message.participants);
-      }
-    };
-
-    webSocket.onerror = (err) => {
+    webSocket.current.onerror = (err) => {
       console.error("WebSocket 에러:", err);
     };
 
-    webSocket.onclose = () => {
+    webSocket.current.onclose = () => {
       console.log("WebSocket 연결 종료");
     };
 
-    // 컴포넌트 언마운트 시 WebSocket 종료
     return () => {
       if (webSocket.current) webSocket.current.close();
     };
   }, [room_id]);
+
+  useEffect(() => {
+    if (participants.length > 0) {
+      const userIdToSave = participants[0].userId; // 첫 번째 참가자의 userId를 가져옴
+      Cookies.set("user_id", userIdToSave, { expires: 1 }); // 쿠키에 저장
+      console.log("Saved user_id to cookie:", userIdToSave);
+    }
+  }, [participants]);
 
   // 주원
   const Chatting1 = () => {
@@ -265,7 +243,7 @@ const SbhGame = () => {
                 <div className={`${styles.user} ${index === 0 ? styles.user1 : styles.user2}`} key={participant.userId}>
                   <img
                     className={`${styles.user_img} ${index === 0 ? styles.myturn_img : ""}`}
-                    src={fingerImages[participant.fingers]}
+                    src={fingerImages[participant.fingers]} // participant.fingers에 따라 이미지 변경
                     alt={`${participant.nickname} 손`}
                   />
                   <div className={`${styles.user_name} ${index === 0 ? styles.myturn : ""}`}>{participant.nickname}</div>
@@ -277,7 +255,11 @@ const SbhGame = () => {
             <div className={styles.user_po2}>
               {participants.slice(2, 4).map((participant, index) => (
                 <div className={`${styles.user} ${index === 0 ? styles.user3 : styles.user4}`} key={participant.userId}>
-                  <img className={styles.user_img} src={fingerImages[participant.fingers]} alt={`${participant.nickname} 손`} />
+                  <img
+                    className={styles.user_img}
+                    src={fingerImages[participant.fingers]} // participant.fingers에 따라 이미지 변경
+                    alt={`${participant.nickname} 손`}
+                  />
                   <div className={styles.user_name}>{participant.nickname}</div>
                 </div>
               ))}

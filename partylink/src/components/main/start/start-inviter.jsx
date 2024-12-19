@@ -12,6 +12,7 @@ const Start = () => {
   const [nickname, setNickname] = useState(""); // 닉네임 상태 관리
   const [roomId, setRoomId] = useState(""); // 생성된 방 ID 저장
   const [userToken, setUserToken] = useState(""); // 호스트의 고유 토큰 저장
+  const [isHost, setIsHost] = useState(false); // 주최자 여부 저장
   const BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const navigate = useNavigate();
 
@@ -26,11 +27,12 @@ const Start = () => {
       const response = await axios.post(`${BASE_URL}/rooms/create-room/`, { host_name: nickname });
 
       // 서버 응답 처리
-      const { room_id, user_token } = response.data;
+      const { room_id, user_token, is_host } = response.data;
 
       // 응답 데이터 상태로 저장
       setRoomId(room_id);
       setUserToken(user_token);
+      setIsHost(is_host);
 
       // 방 URL 클립보드 복사
       const roomUrl = `https://strawberrypudding.store/room/${room_id}`;
@@ -40,9 +42,10 @@ const Start = () => {
       setIsLink(true);
       setTimeout(() => setIsLink(false), 3000); // 3초 후 상태 초기화
 
-      console.log("방 생성 성공:", room_id, user_token);
+      console.log("방 생성 성공:", room_id, user_token, is_host);
+
       // 생성된 방 ID를 포함한 페이지로 이동
-      navigate(`/start-guest/${room_id}`);
+      navigate(`/start-guest-loading/${room_id}`, { state: { roomId: room_id, nickname, isHost: is_host } });
     } catch (error) {
       console.error("방 생성 실패:", error.response?.data || error.message);
 
