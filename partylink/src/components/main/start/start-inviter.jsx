@@ -1,25 +1,68 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../../../assets/scss/components/start.scss";
 import bac from "../../../assets/img/bac.svg";
 import person from "../../../assets/img/person.svg";
 import nextBtn from "../../../assets/img/nextBtn.svg";
 import checked from "../../../assets/img/checked.svg";
+import axios from "axios";
+import partylink from "../../../assets/img/partylink.svg";
 const Start = () => {
   const [isLink, setIsLink] = useState(false);
-  const handleLink = () => {
-    navigator.clipboard.writeText("https://example.com");
-    setIsLink(true);
-    setTimeout(() => setIsLink(false), 3000); //3초 후 문구 숨기기
+  const [nickname, setNickname] = useState(""); // 닉네임 상태 관리
+  const [roomId, setRoomId] = useState(""); // 생성된 방 ID 저장
+  const [userToken, setUserToken] = useState(""); // 호스트의 고유 토큰 저장
+  const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+  const navigate = useNavigate();
+
+  const handleLink = async () => {
+    if (!nickname.trim()) {
+      alert("닉네임을 입력해주세요!");
+      return;
+    }
+
+    try {
+      // 서버에 닉네임 전달
+      const response = await axios.post(`${BASE_URL}/rooms/create-room/`, { host_name: nickname });
+
+      // 서버 응답 처리
+      const { room_id, user_token } = response.data;
+
+      // 응답 데이터 상태로 저장
+      setRoomId(room_id);
+      setUserToken(user_token);
+
+      // 방 URL 클립보드 복사
+      const roomUrl = `https://strawberrypudding.store/room/${room_id}`;
+      navigator.clipboard.writeText(roomUrl);
+
+      // 링크 복사 완료 상태 표시
+      setIsLink(true);
+      setTimeout(() => setIsLink(false), 3000); // 3초 후 상태 초기화
+
+      console.log("방 생성 성공:", room_id, user_token);
+      // 생성된 방 ID를 포함한 페이지로 이동
+      navigate(`/start-guest/${room_id}`);
+    } catch (error) {
+      console.error("방 생성 실패:", error.response?.data || error.message);
+
+      // 오류 처리
+      if (error.response?.status === 400) {
+        alert(error.response.data.error); // "host_name is required."
+      } else {
+        alert("방 생성에 실패했습니다. 다시 시도해주세요.");
+      }
+    }
   };
 
   return (
     <div className="start-wrap">
       <div className="start-container">
-        <h4>partylink</h4>
+        <img src={partylink} alt="partylink-logo" className="partylink-logo"></img>
         <img src={bac} alt="bacground" className="backgoundImg" />
         <img src={person} alt="person" className="img-person" />
         <div className="input-css">
-          <input placeholder="닉네임" className="nickname" />
+          <input placeholder="닉네임" className="nickname" value={nickname} onChange={(e) => setNickname(e.target.value)} />
           <button placeholder="링크 생성" className="link" onClick={handleLink}>
             링크 생성
           </button>

@@ -16,8 +16,9 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Start />}></Route>
-        <Route path="/start-guest" element={<StartGuest />}></Route>
-        <Route path="/start-guest-loading" element={<StartGuestNext />}></Route>
+        {/* start-guest 역할 (roomId 전달) */}
+        <Route path="/start-guest/:room_id" element={<StartGuest />} />
+        <Route path="/start-guest-loading/:room_id" element={<StartGuestNext />}></Route>
         <Route path="/game-category" element={<GameCategory />}></Route>
         <Route path="/game-loading" element={<GameLoading />}></Route>
         <Route path="/chatting1" element={<Chatting1 />}></Route>

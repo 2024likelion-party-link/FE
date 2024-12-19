@@ -31,6 +31,11 @@ body {
       opacity: 0.2;
     }
 
+    .partylink-logo {
+      position: relative;
+      top: -10%;
+      width: 300px;
+    }
     .img-person {
       width: 110%;
       display: block;
@@ -63,7 +68,7 @@ body {
       flex-direction: column; /* 입력 필드들을 세로로 배치 */
       justify-content: center;
       align-items: center;
-      margin-top: 270px;
+      margin-top: 300px;
 
       input,
       button {
@@ -152,7 +157,7 @@ body {
     .game-loading {
       color: #fff;
       position: absolute;
-      bottom: 47%;
+      bottom: 37%;
       font-size: 18px;
     }
     .nickname-connected {

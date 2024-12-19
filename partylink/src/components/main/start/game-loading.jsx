@@ -6,6 +6,7 @@ import Lottie from "lottie-react";
 import loadingLottie from "../../../assets/img/lottie.json";
 import beforeBtn from "../../../assets/img/beforeBtn.svg";
 import ImgGameWhite from "../../../assets/img/imgGameWhite.svg";
+import partylink from "../../../assets/img/partylink.svg";
 
 const Loadiing = () => {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ const Loadiing = () => {
     <div className="category-wrap">
       <div className="category-container">
         <img src={bac2} className="backgoundImg" alt="Background" />
-        <h4>partylink</h4>
+        <img src={partylink} alt="partylink-logo" style={{ position: "relative", top: "-10%", width: "300px" }}></img>
         <p>게임 시작 대기 중이에요.</p>
         <p>조금만 기다려주세요.</p>
         <Lottie animationData={loadingLottie} loop={true} className="loading-animation" />

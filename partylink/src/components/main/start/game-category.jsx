@@ -10,6 +10,7 @@ import beforeBtn from "../../../assets/img/beforeBtn.svg";
 import modalBefore from "../../../assets/img/modalBefore.svg";
 import modalAfter from "../../../assets/img/modalAfter.svg";
 import line from "../../../assets/img/line.svg";
+import partylink from "../../../assets/img/partylink.svg";
 
 const GameCategory = () => {
   const navigate = useNavigate();
@@ -94,7 +95,7 @@ const GameCategory = () => {
 
       <div className="category-container">
         <img src={bac2} className="backgoundImg" alt="Background"></img>
-        <h4>partylink</h4>
+        <img src={partylink} alt="partylink-logo" style={{ position: "relative", top: "-10%", width: "300px" }}></img>
         <p>함께 플레이 하고 싶은 게임을 선택해</p>
         <p> 친구들에게 제안해보세요!</p>
         <div className="game-container">
