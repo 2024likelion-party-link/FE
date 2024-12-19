@@ -33,7 +33,7 @@ const GameCategory = () => {
         setIsNotice(true);
 
         const gameRoutes = {
-          "손병호 게임": "/SbnGame",
+          "손병호 게임": "/SbhGame",
           "이미지 게임": "/ImgGame",
         };
 
@@ -66,6 +66,8 @@ const GameCategory = () => {
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
       socketRef.current.send(JSON.stringify({ type: "game_start", gameType: selectedGame }));
       setShowModal(false);
+    } else {
+      console.error("WebSocket 연결 상태가 닫혀 있습니다.");
     }
   };
 

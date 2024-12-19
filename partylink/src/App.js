@@ -19,13 +19,13 @@ function App() {
         {/* start-guest 역할 (roomId 전달) */}
         <Route path="/start-guest/:room_id" element={<StartGuest />} />
         <Route path="/start-guest-loading/:room_id" element={<StartGuestNext />}></Route>
-        <Route path="/game-category" element={<GameCategory />}></Route>
+        <Route path="/game-category/:room_id" element={<GameCategory />}></Route>
         <Route path="/game-loading" element={<GameLoading />}></Route>
         <Route path="/chatting1" element={<Chatting1 />}></Route>
         <Route path="/chatting2" element={<Chatting2 />}></Route>
         <Route path="/GameEnding" element={<GameEnding />}></Route>
         <Route path="/ImgGame" element={<ImgGame />}></Route>
-        <Route path="/SbhGame" element={<SbhGame />}></Route>
+        <Route path="/SbhGame/8kPzQlJkHSDa" element={<SbhGame />}></Route>
       </Routes>
     </BrowserRouter>
   );
