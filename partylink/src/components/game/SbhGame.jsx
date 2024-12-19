@@ -133,7 +133,10 @@ const SbhGame = () => {
 
   // 주원
   const Chatting1 = () => {
-    const [messages, setMessages] = useState([]);
+    const [messages, setMessages] = useState([
+      // { text: "Q. 제일 웃음이 많은 사람은?", sender: "player" },
+      // { text: "Lorem ipsum dolor sit", sender: "player" },
+    ]);
     const [inputValue, setInputValue] = useState("");
     const [isMyTurn, setIsMyTurn] = useState(false);
     const [infoMessages, setInfoMessages] = useState([]);
@@ -327,7 +330,11 @@ const SbhGame = () => {
                   return (
                     <Styled.MessageWrapper key={index} isGap={isGap}>
                       {message.img ? (
-                        <Styled.InformationImg src={message.img} alt={message.text} />
+                        <Styled.InformationWrapper>
+                          {" "}
+                          {/* 새로운 컨테이너로 감싸기 */}
+                          <Styled.InformationImg src={message.img} alt={message.text} />
+                        </Styled.InformationWrapper>
                       ) : (
                         <Styled.Message isUser={message.sender === "user"} isQuestion={message.text.startsWith("Q.")}>
                           {message.text}

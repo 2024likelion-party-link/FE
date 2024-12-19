@@ -52,11 +52,20 @@ export const MessageWrapper = styled.div`
   flex-direction: column;
   width: 100%;
 `;
+export const InformationWrapper = styled.div`
+  display: flex;
+  justify-content: center; /* 수평 중앙 정렬 */
+  align-items: center; /* 수직 중앙 정렬 */
+  width: 100%; /* 필요한 경우 폭을 100%로 설정 */
+  margin-bottom: 10px; /* 정보 이미지와 다른 내용 사이에 여백을 줄 수 있습니다 */
+`;
 
 export const InformationImg = styled.img`
   width: 380px;
   max-width: 100%;
   height: auto;
+  display: block; /* 이미지가 block으로 처리되어 중앙 정렬이 잘 됩니다 */
+  margin: 0 auto;
 `;
 
 export const InformationText = styled.div`
@@ -140,15 +149,15 @@ export const IconButtonAll = styled.div`
 `;
 
 export const IconButton1 = styled.img`
-  width: 45px;
-  height: 45px;
+  width: 40px;
+  height: 40px;
   position: absolute;
   z-index: 1;
 `;
 
 export const IconButton2 = styled.img`
-  width: 24px;
-  height: 24px;
+  width: 21px;
+  height: 21px;
   position: absolute;
   z-index: 2;
 `;
