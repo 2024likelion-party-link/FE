@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "../../../assets/scss/components/start.scss";
 import bac from "../../../assets/img/bac.svg";
@@ -11,10 +11,38 @@ const StartGuest = () => {
   const [nickname, setNickname] = useState("");
   const navigate = useNavigate();
   const [error, setError] = useState("");
+  const socketRef = useRef(null); // WebSocket 객체를 저장
 
-  // WebSocket 설정
-  const wsUrl = `wss://strawberrypudding.store/wss/room/${room_id}/`;
-  let socket;
+  useEffect(() => {
+    // WebSocket 연결 설정
+    const wsUrl = `wss://strawberrypudding.store/ws/room/${room_id}/`;
+    socketRef.current = new WebSocket(wsUrl);
+
+    socketRef.current.onopen = () => {
+      console.log("WebSocket 연결 성공:", wsUrl);
+    };
+
+    socketRef.current.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === "error") {
+        setError(data.message);
+      }
+    };
+
+    socketRef.current.onerror = (err) => {
+      console.error("WebSocket 에러:", err);
+      // setError("서버와 연결할 수 없습니다.");
+    };
+
+    socketRef.current.onclose = () => {
+      console.log("WebSocket 연결 종료");
+    };
+
+    // 컴포넌트 언마운트 시 WebSocket 종료
+    return () => {
+      if (socketRef.current) socketRef.current.close();
+    };
+  }, [room_id]);
 
   const handleConnecting = () => {
     if (!nickname.trim()) {
@@ -22,37 +50,19 @@ const StartGuest = () => {
       return;
     }
 
-    // WebSocket 연결
-    socket = new WebSocket(wsUrl);
-
-    socket.onopen = () => {
-      console.log("WebSocket 연결 성공");
+    if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+      // 서버로 닉네임 전송
       const joinMessage = {
         type: "join",
         nickname: nickname.trim(),
       };
-      socket.send(JSON.stringify(joinMessage));
-    };
+      socketRef.current.send(JSON.stringify(joinMessage));
 
-    socket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data.type === "self_id") {
-        console.log("본인 ID 수신:", data.userId);
-        navigate("/start-guest-loading/${room_id}");
-      } else if (data.type === "error") {
-        console.error("에러 메시지:", data.message);
-        setError(data.message);
-      }
-    };
-
-    socket.onerror = (err) => {
-      console.error("WebSocket 에러:", err);
-      setError("서버와 연결할 수 없습니다.");
-    };
-
-    socket.onclose = () => {
-      console.log("WebSocket 연결 종료");
-    };
+      // 페이지 이동
+      navigate(`/start-guest-loading/${room_id}`, { state: { nickname } });
+    } else {
+      setError("WebSocket 연결이 준비되지 않았습니다.");
+    }
   };
 
   return (
@@ -61,7 +71,7 @@ const StartGuest = () => {
         <img src={partylink} alt="partylink-logo" className="partylink-logo"></img>
         <img src={bac} alt="bacground" className="backgoundImg" />
         <img src={person} alt="person" className="img-person" />
-        <p className="game-loading">게임을 준비 중이에요.</p>
+        {/* <p className="game-loading">게임을 준비 중이에요.</p> */}
         <div className="input-css">
           <input
             placeholder="닉네임"
@@ -78,6 +88,7 @@ const StartGuest = () => {
           <p>게임에서 사용할 본인의 닉네임을 설정해주세요.</p>
           <p>(친구들이 알아보기 쉬운 이름이나 별명을 추천해요!)</p>
         </div>
+        {error && <p className="error-message">{error}</p>}
         <img src={nextBtn} className="nextBtn" alt="Next Button" onClick={handleConnecting}></img>
       </div>
     </div>
