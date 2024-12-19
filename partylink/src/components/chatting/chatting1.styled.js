@@ -45,14 +45,31 @@ export const ChatInfo = styled.div`
 
 export const Information = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   margin: 20px 0;
+  position: relative;
+  width: 100%; /* 전체 너비로 설정 */
+`;
 
-  img {
-    width: 380px;
-    max-width: 100%;
-  }
+export const MessageWrapper = styled.div`
+  margin-top: ${(props) => (props.isGap ? "10px" : "1px")};
+  display: flex;
+  flex-direction: column;
+`;
+
+export const InformationImg = styled.img`
+  width: 380px;
+  max-width: 100%;
+`;
+
+export const InformationText = styled.div`
+  font-size: 14px;
+  color: #fff;
+  text-align: center;
+  margin-top: 10px;
+  font-weight: bold;
 `;
 
 export const PlayerLabel = styled.div`
@@ -64,12 +81,6 @@ export const PlayerInfo = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
-`;
-
-export const MessageWrapper = styled.div`
-  margin-top: ${(props) => (props.isGap ? "10px" : "1px")};
-  display: flex;
-  flex-direction: column;
 `;
 
 export const Message = styled.div`
@@ -151,14 +162,11 @@ export const Input = styled.input`
   border: none;
   background: transparent;
   font-size: 14px;
-  font-weight: ${(props) => (props.isMyTurn ? "bold" : "normal")}; /* 질문은 bold */
-  color: ${(props) => (props.isMyTurn ? "#4722E4" : "#fff")}; /* 내 차례면 텍스트 색상 남색 */
+  font-weight: ${(props) => (props.isMyTurn ? "bold" : "normal")};
+  color: ${(props) => (props.isMyTurn ? "#4722E4" : "#fff")};
   outline: none;
 
-  // margin-top: 3px;
-
   &::placeholder {
-    color: ${(props) => (props.isMyTurn ? "#4722E4" : "white")}; /* 플레이스홀더 색상 변경 */
-    // font-weight: ${(props) => (props.isMyTurn ? "bold" : "normal")}; /* 질문은 bold */
+    color: ${(props) => (props.isMyTurn ? "#4722E4" : "white")};
   }
 `;
