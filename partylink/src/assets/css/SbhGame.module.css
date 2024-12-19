@@ -85,7 +85,10 @@ main {
 
 .user_img {
   z-index: 2;
-  width: 55px;
+  width: 45px; /* 원하는 너비 */
+  height: 60px; /* 원하는 높이 */
+  object-fit: contain; /* 비율 유지하며 컨테이너에 맞춤 */
+
   display: flex;
   justify-content: center;
   align-items: center;

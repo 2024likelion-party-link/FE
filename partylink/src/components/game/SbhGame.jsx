@@ -141,7 +141,11 @@ const SbhGame = () => {
 
     const handleSendClick = () => {
       if (inputValue.trim()) {
-        const newMessage = { text: inputValue, sender: "user" };
+        const newMessage = {
+          text: isMyTurn ? `Q. ${inputValue}` : inputValue, // 내 차례일 때 Q. 추가
+          sender: "user",
+          isQuestion: isMyTurn, // 내 차례일 때 질문으로 처리
+        };
         setMessages([...messages, newMessage]);
         setInputValue("");
         setIsMyTurn(!isMyTurn);
@@ -279,7 +283,7 @@ const SbhGame = () => {
             {/* user_po3 (Current User) */}
             <div className={styles.user_po3}>
               <div className={`${styles.user} ${styles.me}`} onClick={downFinger}>
-                <img className={styles.user_img} src={fingerImages[fingerCount]} style={{ width: "55px" }} alt="손가락 접기" />
+                <img className={styles.user_img} src={fingerImages[fingerCount]} alt="손가락 접기" />
                 <div className={styles.user_name}> (나)</div>
               </div>
             </div>

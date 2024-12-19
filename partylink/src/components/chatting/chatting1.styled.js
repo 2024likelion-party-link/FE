@@ -1,10 +1,10 @@
 import styled from "styled-components";
 
-// 전체 화면을 중앙에 배치
 export const ContainerAll = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  // width: calc(90% - 10vh);
   width: 100%;
   height: 100%;
   background-color: #262b34;
@@ -12,27 +12,25 @@ export const ContainerAll = styled.div`
   padding: 0 10px;
 `;
 
-// 채팅 영역의 컨테이너
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   width: 100%;
   max-width: 600px; /* 최대 너비 설정 */
-  height: 100%; /* 부모 컨테이너의 높이에 맞게 설정 */
+  height: 45vh; /* 높이를 화면의 45%로 고정 */
   background-color: #1e2224;
   border-radius: 0 0 25px 25px;
   margin-top: 10px;
   box-sizing: border-box;
 `;
 
-// 채팅 정보 영역
 export const ChatInfo = styled.div`
   padding: 25px;
   background-color: #1e2224;
   overflow-y: auto; /* 세로 스크롤 자동 활성화 */
   overflow-x: hidden;
-  max-height: 60vh; /* 화면에 맞게 높이 조정 */
+  height: 60vh; /* 화면의 60% 높이로 고정 */
   box-sizing: border-box;
 
   &::-webkit-scrollbar {
@@ -48,7 +46,6 @@ export const ChatInfo = styled.div`
   }
 `;
 
-// 메시지 영역
 export const MessageWrapper = styled.div`
   margin-top: ${(props) => (props.isGap ? "10px" : "1px")};
   display: flex;
@@ -56,14 +53,12 @@ export const MessageWrapper = styled.div`
   width: 100%;
 `;
 
-// 정보 이미지 크기 조정
 export const InformationImg = styled.img`
-  width: 100%;
-  max-width: 380px;
+  width: 380px;
+  max-width: 100%;
   height: auto;
 `;
 
-// 정보 텍스트 스타일
 export const InformationText = styled.div`
   font-size: 14px;
   color: #fff;
@@ -72,24 +67,21 @@ export const InformationText = styled.div`
   font-weight: bold;
 `;
 
-// 플레이어 라벨
 export const PlayerLabel = styled.div`
   font-size: 14px;
   color: #848687;
 `;
 
-// 플레이어 정보 스타일
 export const PlayerInfo = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
 `;
 
-// 메시지 스타일
 export const Message = styled.div`
   align-self: ${(props) => (props.isUser ? "flex-end" : "flex-start")};
   font-size: 14px;
-  color: ${(props) => (props.isQuestion ? "#4722E4" : "#fff")};
+  color: ${(props) => (props.isQuestion ? "#4722E4" : "#fff")}; // 질문일 경우 남색
   font-weight: ${(props) => (props.isQuestion ? "bold" : "normal")};
   margin: 0;
   padding: 10px 15px;
@@ -99,7 +91,6 @@ export const Message = styled.div`
   word-wrap: break-word;
 `;
 
-// 입력창 외부 영역 스타일
 export const ChatInputWrapper = styled.div`
   display: flex;
   align-items: center;
@@ -109,7 +100,6 @@ export const ChatInputWrapper = styled.div`
   gap: 10px;
 `;
 
-// 입력창 내부 스타일
 export const InputContainer = styled.div`
   display: flex;
   align-items: center;
@@ -122,7 +112,6 @@ export const InputContainer = styled.div`
   margin-bottom: 10px;
 `;
 
-// 질문 아이콘
 export const QIcon = ({ isMyTurn }) => (
   <svg width="31" height="31" viewBox="0 0 31 31" fill="none" xmlns="http://www.w3.org/2000/svg">
     <circle cx="15.5" cy="15.5" r="15.5" fill="#646C7B" />
@@ -133,7 +122,6 @@ export const QIcon = ({ isMyTurn }) => (
   </svg>
 );
 
-// 도움말 텍스트 스타일
 export const HelpText = styled.img`
   display: flex;
   margin-right: 40px;
@@ -142,7 +130,6 @@ export const HelpText = styled.img`
   cursor: pointer;
 `;
 
-// 아이콘 버튼 영역
 export const IconButtonAll = styled.div`
   display: flex;
   position: relative;
@@ -152,7 +139,6 @@ export const IconButtonAll = styled.div`
   right: 16px;
 `;
 
-// 첫 번째 아이콘 스타일
 export const IconButton1 = styled.img`
   width: 45px;
   height: 45px;
@@ -160,7 +146,6 @@ export const IconButton1 = styled.img`
   z-index: 1;
 `;
 
-// 두 번째 아이콘 스타일
 export const IconButton2 = styled.img`
   width: 24px;
   height: 24px;
@@ -168,7 +153,6 @@ export const IconButton2 = styled.img`
   z-index: 2;
 `;
 
-// 입력창 스타일
 export const Input = styled.input`
   flex: 1;
   border: none;
