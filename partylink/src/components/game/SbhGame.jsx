@@ -30,33 +30,31 @@ import HelpImage from "../../assets/img/HELP.svg";
 // 서영
 const SbhGame = () => {
   const location = useLocation();
-  const { room_id = "defaultRoom", nickname = "Guest", gameType = "defaultGame" } = location.state || {};
-
-  // room_id와 nickname을 활용해 로직 작성
-  console.log("Room ID:", room_id, "Nickname:", nickname, "Game Type:", gameType);
+  const { room_id = "", nickname = "", gameType = "" } = location.state || {};
 
   const webSocket = useRef(null);
   const [participants, setParticipants] = useState([]);
-
+  const [fingerCount, setFingerCount] = useState(5); // 손가락 개수를 상태로 관리
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
   // 모달 열기/닫기 함수
   const openModal = () => setModalIsOpen(true);
   const closeModal = () => setModalIsOpen(false);
 
-  const [fingerCount, setFingerCount] = useState(5); // 손가락 개수를 상태로 관리
+  const sendMessage = (message) => {
+    if (webSocket.current && webSocket.current.readyState === WebSocket.OPEN) {
+      webSocket.current.send(JSON.stringify(message));
+      console.log("Message sent:", message);
+    } else {
+      console.error("WebSocket is not open.");
+    }
+  };
 
   // 손가락 줄이기 함수
   const downFinger = () => {
     if (fingerCount > 0) {
       setFingerCount((prev) => prev - 1);
-
-      // WebSocket 메시지 전송
-      if (webSocket.current && webSocket.current.readyState === WebSocket.OPEN) {
-        webSocket.current.send(JSON.stringify({ type: "fold" }));
-      } else {
-        console.error("WebSocket is not connected");
-      }
+      sendMessage({ type: "fold" }); // 메시지 전송
     }
   };
 
@@ -64,27 +62,38 @@ const SbhGame = () => {
   const fingerImages = [finger0, finger1, finger2, finger3, finger4, finger5];
 
   useEffect(() => {
-    webSocket.current = new WebSocket(`wss://strawberrypudding.store/ws/game/8kPzQlJkHSDa/`);
+    if (!room_id) {
+      console.error("Invalid room_id");
+      return;
+    }
+    const wsUrl = `wss://strawberrypudding.store/ws/game/${room_id}/`;
+    webSocket.current = new WebSocket(wsUrl);
 
     webSocket.current.onopen = () => {
-      console.log("WebSocket 연결!");
+      console.log("WebSocket connected to:", wsUrl);
+      const userId = Cookies.get("user_id");
+      if (userId) {
+        sendMessage({ type: "join", userId, nickname });
+      } else {
+        console.error("User ID is missing in cookies.");
+      }
     };
 
     webSocket.current.onmessage = (event) => {
       try {
         const message = JSON.parse(event.data);
         switch (message.type) {
-          case "game_start":
-            console.log(`${message.gameType} 게임 시작`);
-            break;
           case "participants_update":
             setParticipants(message.participants || []);
+            break;
+          case "game_started":
+            console.log("Game started:", message);
             break;
           default:
             console.warn("Unknown message type:", message);
         }
       } catch (error) {
-        console.error("Message parsing error:", error);
+        console.error("Error parsing message:", error);
       }
     };
 
@@ -93,19 +102,24 @@ const SbhGame = () => {
     };
 
     webSocket.current.onclose = () => {
-      console.log("WebSocket 연결 종료");
+      console.log("WebSocket 연결 종료, 재시도 중...");
+      setTimeout(() => {
+        webSocket.current = new WebSocket(wsUrl);
+      }, 1000); // 1초 후 재연결
     };
 
     return () => {
       if (webSocket.current) webSocket.current.close();
     };
-  }, [room_id]);
+  }, [room_id, nickname]);
 
   useEffect(() => {
     if (participants.length > 0) {
-      const userIdToSave = participants[0].userId; // 첫 번째 참가자의 userId를 가져옴
-      Cookies.set("user_id", userIdToSave, { expires: 1 }); // 쿠키에 저장
-      console.log("Saved user_id to cookie:", userIdToSave);
+      const userIdToSave = participants[0]?.userId;
+      if (userIdToSave) {
+        Cookies.set("user_id", userIdToSave, { expires: 1 });
+        console.log("Saved user_id to cookies:", userIdToSave);
+      }
     }
   }, [participants]);
 
@@ -113,25 +127,85 @@ const SbhGame = () => {
   const Chatting1 = () => {
     const [messages, setMessages] = useState([
       // { text: "Q. 제일 웃음이 많은 사람은?", sender: "player" },
-      // { text: "Lorem ipsum dolor sit", sender: "player" },
+      // { text: "Lorem ipsum dolor sit", sender: "user" },
     ]);
     const [inputValue, setInputValue] = useState("");
     const [isMyTurn, setIsMyTurn] = useState(false);
     const [infoMessages, setInfoMessages] = useState([]);
     const [gameOver, setGameOver] = useState(false);
 
-    const handleSendClick = () => {
-      if (inputValue.trim()) {
-        const newMessage = {
-          text: isMyTurn ? `Q. ${inputValue}` : inputValue, // 내 차례일 때 Q. 추가
-          sender: "user",
-          isQuestion: isMyTurn, // 내 차례일 때 질문으로 처리
-        };
-        setMessages([...messages, newMessage]);
-        setInputValue("");
-        setIsMyTurn(!isMyTurn);
+    const webSocket = useRef(null);
 
-        setInfoMessages((prev) => [...prev, { img: Info4, text: "닉네임님의 손가락이 가장 먼저 접혔네요!" }]);
+    useEffect(() => {
+      const wsUrl = `wss://strawberrypudding/ws/game/24X1CNJ6Ccwf`;
+      console.log("WebSocket 연결 URL:", wsUrl);
+
+      webSocket.current = new WebSocket(wsUrl);
+
+      webSocket.current.onopen = () => {
+        console.log("Chatting WebSocket 연결 성공!");
+      };
+
+      webSocket.current.onmessage = (event) => {
+        try {
+          const message = JSON.parse(event.data);
+          switch (message.type) {
+            case "participants_update":
+              setParticipants(message.participants || []);
+              console.log("참가자 업데이트:", message.participants); // 디버그 로그
+              break;
+            case "game_start":
+              console.log(`${message.gameType} 게임 시작`);
+              break;
+            default:
+              console.warn("Unknown message type:", message);
+          }
+        } catch (error) {
+          console.error("WebSocket 메시지 파싱 오류:", error);
+        }
+      };
+
+      webSocket.current.onerror = (err) => {
+        console.error("WebSocket 에러:", err);
+      };
+
+      webSocket.current.onclose = () => {
+        console.log("WebSocket 연결 종료");
+      };
+
+      return () => {
+        if (webSocket.current) webSocket.current.close();
+      };
+    }, [room_id]);
+
+    const handleSendClick = () => {
+      if (inputValue.trim() && webSocket.current && webSocket.current.readyState === WebSocket.OPEN) {
+        // API 명세서에 맞는 데이터 구조로 수정
+        const newMessage = {
+          type: "participants_update",
+          participants: [
+            {
+              userId: Cookies.get("user_id"), // 쿠키에서 user_id 가져오기
+              nickname: nickname, // 현재 사용자의 닉네임
+              is_host: true, // 호스트 여부, 필요에 따라 동적으로 변경 가능
+            },
+            {
+              userId: "5678", // 테스트를 위한 샘플 데이터
+              nickname: inputValue, // 입력값을 다른 참가자의 닉네임으로 사용
+              is_host: false,
+            },
+          ],
+        };
+
+        console.log("전송 메시지:", newMessage);
+
+        // WebSocket을 통해 서버로 메시지 전송
+        webSocket.current.send(JSON.stringify(newMessage));
+        setMessages((prev) => [...prev, { text: `참가자 업데이트: ${inputValue}`, sender: "user" }]); // 로컬 메시지 추가
+        setInputValue(""); // 입력 필드 초기화
+      } else {
+        console.error("WebSocket 연결이 되어 있지 않거나 입력값이 없습니다.");
+        console.log("WebSocket 상태:", webSocket.current?.readyState);
       }
     };
 
@@ -190,7 +264,7 @@ const SbhGame = () => {
       };
     }, [gameOver, messages]);
 
-    const combinedMessages = [...messages, ...infoMessages];
+    const combinedMessages = [...infoMessages, ...messages];
 
     return (
       <>
@@ -235,6 +309,7 @@ const SbhGame = () => {
           </div>
         </div>
       </main> */}
+
         <main>
           <div className={styles.game_box}>
             {/* user_po1 */}
@@ -306,9 +381,9 @@ const SbhGame = () => {
           <Styled.Container>
             <Styled.ChatInfo>
               <Styled.PlayerInfo>
-                <Styled.PlayerLabel>플레이어1</Styled.PlayerLabel>
                 {combinedMessages.map((message, index) => {
                   const isGap = index === 0 || combinedMessages[index - 1].sender !== message.sender;
+                  <Styled.PlayerLabel>{nickname}</Styled.PlayerLabel>;
                   return (
                     <Styled.MessageWrapper key={index} isGap={isGap}>
                       {message.img ? (

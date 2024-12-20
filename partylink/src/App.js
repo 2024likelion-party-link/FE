@@ -1,3 +1,4 @@
+//app.js
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Start from "./components/main/start/start-inviter.jsx";
@@ -25,7 +26,7 @@ function App() {
         <Route path="/chatting2" element={<Chatting2 />}></Route>
         <Route path="/GameEnding" element={<GameEnding />}></Route>
         <Route path="/ImgGame" element={<ImgGame />}></Route>
-        <Route path="/SbhGame/8kPzQlJkHSDa" element={<SbhGame />}></Route>
+        <Route path="/SbhGame/:room_id" element={<SbhGame />}></Route>
       </Routes>
     </BrowserRouter>
   );
