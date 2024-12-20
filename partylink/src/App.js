@@ -25,7 +25,7 @@ function App() {
         <Route path="/chatting1" element={<Chatting1 />}></Route>
         <Route path="/chatting2" element={<Chatting2 />}></Route>
         <Route path="/GameEnding" element={<GameEnding />}></Route>
-        <Route path="/ImgGame" element={<ImgGame />}></Route>
+        <Route path="/ImgGame/:room_id" element={<ImgGame />}></Route>
         <Route path="/SbhGame/:room_id" element={<SbhGame />}></Route>
       </Routes>
     </BrowserRouter>

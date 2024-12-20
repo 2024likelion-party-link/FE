@@ -249,3 +249,24 @@ hr {
   width: 50px;
   height: 56px;
 }
+
+.comingSoonBoxDiv {
+  display: flex;
+  flex-direction: center;
+  align-items: center;
+  justify-content: center;
+}
+
+.comingSoonBox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 380px;
+  height: 580px;
+  border-radius: 20px;
+  background-color: rgb(136, 156, 188, 0.7); /* 투명한 배경 설정 */
+  color: #000000;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  font-size: 25px;
+  font-weight: bold;
+}

@@ -44,11 +44,11 @@ const ImgGame = () => {
     });
   };
 
-  const selectPerson = (event) => {
-    const clickedUser = event.currentTarget;
-    lastClickedUserRef.current = clickedUser; // 마지막으로 클릭된 사용자 저장
-    calculateCoords(clickedUser);
-  };
+  // const selectPerson = (event) => {
+  //   const clickedUser = event.currentTarget;
+  //   lastClickedUserRef.current = clickedUser; // 마지막으로 클릭된 사용자 저장
+  //   calculateCoords(clickedUser);
+  // };
 
   // 화면 크기 변경 시 SVG 좌표 재계산
   useEffect(() => {
@@ -62,15 +62,15 @@ const ImgGame = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const [score1, setScore1] = useState(0);
-  const [score2, setScore2] = useState(0);
-  const [score3, setScore3] = useState(0);
-  const [score4, setScore4] = useState(0);
-  const [scoreMe, setScoreMe] = useState(0);
+  // const [score1, setScore1] = useState(0);
+  // const [score2, setScore2] = useState(0);
+  // const [score3, setScore3] = useState(0);
+  // const [score4, setScore4] = useState(0);
+  // const [scoreMe, setScoreMe] = useState(0);
 
-  const plusScore = (scoreSetter) => {
-    scoreSetter((prevScore) => prevScore + 1);
-  };
+  // const plusScore = (scoreSetter) => {
+  //   scoreSetter((prevScore) => prevScore + 1);
+  // };
 
   return (
     <div className={styles.page}>
@@ -85,11 +85,10 @@ const ImgGame = () => {
       </header>
 
       <main>
-        <div className={styles.game_box}>
+        {/* <div className={styles.game_box}>
           <div className={styles.user_po1}>
             <div className={`${styles.user} ${styles.user1}`} onClick={selectPerson}>
               <div className={styles.user_score} onClick={() => plusScore(setScore1)}>
-                {/* 일단 구현을 위해 클릭하면 올라가는 것으로 구현, 결과에 대한 백엔드 코드 받으면 수정 필요 */}
                 {score1}
               </div>
               <div className={`${styles.user_img} ${styles.myturn_img}`}>닉</div>
@@ -130,10 +129,10 @@ const ImgGame = () => {
               <div className={styles.user_name}>닉네임 (나)</div>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* SVG 선 및 끝부분 원 */}
-        {lineCoords && (
+        {/* {lineCoords && (
           <svg
             style={{
               position: "absolute",
@@ -144,9 +143,9 @@ const ImgGame = () => {
               pointerEvents: "none", // SVG가 클릭을 방해하지 않도록 설정
             }}
           >
-            {/* 화살표 선 */}
+
             <line x1={lineCoords.startX} y1={lineCoords.startY} x2={lineCoords.endX} y2={lineCoords.endY} stroke="#C4EBE3" strokeWidth="3" />
-            {/* 끝부분 원 */}
+
             <circle
               cx={lineCoords.endX}
               cy={lineCoords.endY}
@@ -154,8 +153,13 @@ const ImgGame = () => {
               fill="#C4EBE3"
             />
           </svg>
-        )}
+        )} */}
       </main>
+
+      <div className={styles.comingSoonBoxDiv}>
+        <div className={styles.comingSoonBox}>Coming Soon</div>
+      </div>
+
       <Modal
         isOpen={modalIsOpen} // 모달 열림 여부
         onRequestClose={closeModal} // 바깥 클릭 또는 ESC 키로 닫기
